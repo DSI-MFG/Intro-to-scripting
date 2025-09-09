@@ -38,6 +38,7 @@ function createSimpleChart(probeData) {
   const nominal = probeData[0].nominal;
   const tolerance = probeData[0].tolerance;
   const compBand = probeData[0].compBand;
+  const compAmount = probeData[0].compAmount;
 
   // Create tolerance bands
   const upperTol = new Array(labels.length).fill(nominal + tolerance);
@@ -98,6 +99,15 @@ function createSimpleChart(probeData) {
           borderColor: "#ff6b6b",
           backgroundColor: "rgba(255, 107, 107, 0.2)",
           pointRadius: 4,
+          borderWidth: 2,
+          tension: 0.1,
+        },
+        {
+          label: "Compensation Applied",
+          data: probeData.map((d) => nominal + d.compAmount),
+          borderColor: "#0066cc",
+          backgroundColor: "rgba(0, 102, 204, 0.2)",
+          pointRadius: 3,
           borderWidth: 2,
           tension: 0.1,
         },
