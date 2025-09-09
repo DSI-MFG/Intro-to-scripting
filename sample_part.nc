@@ -1,0 +1,96 @@
+(Sample NC File for Machinists Demo)
+(Program: SAMPLE_PART.MPF)
+(Description: Sample part with multiple tools and Z movements)
+(Generated: 2024-01-15)
+
+G90 G94 G17
+G21
+G53 G0 Z0
+
+(Setup and safety)
+M6 T1 (1/4 END MILL)
+G0 X0 Y0
+G43 H1 Z10
+S1200 M3
+G0 Z5
+G1 Z-2.5 F200
+G0 Z5
+G1 Z-5.0 F200
+G0 Z5
+G1 Z-7.5 F200
+G0 Z5
+G1 Z-10.2 F200
+G0 Z10
+
+(Change to tool 2)
+M6 T2
+(3/8 DRILL)
+G0 X50 Y0
+G43 H2 Z10
+S800 M3
+G0 Z5
+G1 Z-3.2 F150
+G0 Z5
+G1 Z-6.4 F150
+G0 Z5
+G1 Z-9.6 F150
+G0 Z5
+G1 Z-12.8 F150
+G0 Z10
+
+(Change to tool 3)
+M6 T3 (1/2 BALL END MILL)
+G0 X100 Y0
+G43 H3 Z10
+S600 M3
+G0 Z5
+G1 Z-1.8 F100
+G0 Z5
+G1 Z-3.6 F100
+G0 Z5
+G1 Z-5.4 F100
+G0 Z5
+G1 Z-7.2 F100
+G0 Z5
+G1 Z-9.0 F100
+G0 Z5
+G1 Z-10.8 F100
+G0 Z10
+
+(Change to tool 4)
+M6 T4
+(1/8 SPOT DRILL)
+G0 X150 Y0
+G43 H4 Z10
+S1000 M3
+G0 Z5
+G1 Z-4.1 F180
+G0 Z5
+G1 Z-8.2 F180
+G0 Z5
+G1 Z-12.3 F180
+G0 Z5
+G1 Z-16.4 F180
+G0 Z10
+
+(Change to tool 5)
+M6 T5 (3/16 TAP)
+G0 X200 Y0
+G43 H5 Z10
+S750 M3
+G0 Z5
+G1 Z-2.7 F120
+G0 Z5
+G1 Z-5.4 F120
+G0 Z5
+G1 Z-8.1 F120
+G0 Z5
+G1 Z-10.8 F120
+G0 Z5
+G1 Z-13.5 F120
+G0 Z10
+
+(End of program)
+M5
+G0 Z50
+M30

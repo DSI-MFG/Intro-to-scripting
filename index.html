@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Intro To Scripting</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <style>
+      /* Custom styles for upload area and file preview */
+      body {
+        padding: 1rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        transform: scale(0.85);
+        transform-origin: top center;
+      }
+
+      .card {
+        margin-bottom: 1rem;
+        border: 1px solid var(--pico-border-color);
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        background: var(--pico-background-color);
+      }
+      .row {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: 1fr;
+      }
+
+      .upload-container {
+        margin-bottom: 1.5rem;
+      }
+
+      .small {
+        font-size: 0.8125rem;
+        color: var(--pico-muted-color);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.45rem 0.65rem;
+        border: 1px solid var(--pico-muted-border-color, #e5e7eb);
+        border-radius: 0.55rem;
+        background: #fff;
+        color: inherit;
+        text-decoration: none;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
+        transition:
+          transform 0.06s ease,
+          background 0.12s ease,
+          box-shadow 0.12s ease;
+      }
+
+      .btn:hover {
+        background: #f8fafc;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+
+      .btn:active {
+        transform: translateY(1px);
+      }
+
+      textarea,
+      pre {
+        width: 100%;
+        min-height: 6rem;
+        background: var(--pico-muted-border-color);
+        color: var(--pico-color);
+        border: 1px solid var(--pico-border-color);
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Consolas, "Courier New",
+          monospace;
+        font-size: 0.8125rem;
+        line-height: 1.5;
+        transition: border-color 0.3s ease;
+      }
+
+      textarea:focus {
+        outline: none;
+        border-color: var(--pico-primary);
+        box-shadow: 0 0 0 3px var(--pico-primary-focus);
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+      }
+
+      .tag {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 1.25rem;
+        background: var(--pico-primary);
+        color: var(--pico-primary-inverse);
+        font-size: 0.75rem;
+        margin-right: 0.5rem;
+        font-weight: 500;
+      }
+
+      canvas {
+        background: var(--pico-background-color);
+        border: 1px solid var(--pico-border-color);
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      input[type="file"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+      }
+
+      .file-input-wrapper {
+        position: relative;
+        display: inline-block;
+      }
+
+      .file-input-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+        padding: 0.45rem 0.65rem;
+        border: 1px solid var(--pico-muted-border-color, #e5e7eb);
+        border-radius: 0.55rem;
+        background: #fff;
+        color: inherit;
+        text-decoration: none;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
+        transition:
+          transform 0.06s ease,
+          background 0.12s ease,
+          box-shadow 0.12s ease;
+        font-size: 0.875rem;
+        cursor: pointer;
+        min-width: auto;
+        height: 2.5rem;
+      }
+
+      .file-input-text {
+        font-size: 0.875rem;
+        color: var(--pico-muted-color);
+        margin-left: 0.5rem;
+      }
+
+      .file-name-display {
+        font-size: 0.875rem;
+        color: var(--pico-color);
+        margin-left: 0.5rem;
+        font-weight: 500;
+      }
+
+      .code-area-expanded {
+        min-height: 20rem !important;
+        font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 0.375rem;
+        padding: 1rem;
+        tab-size: 2;
+      }
+
+      .code-area-expanded:focus {
+        background: #ffffff;
+        border-color: var(--pico-primary);
+        box-shadow: 0 0 0 3px var(--pico-primary-focus);
+      }
+
+      .file-input-button:hover {
+        background: #f8fafc;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+
+      .file-input-button:active {
+        transform: translateY(1px);
+      }
+
+      .file-input-button:focus {
+        outline: none;
+        border-color: var(--pico-primary);
+        box-shadow: 0 0 0 3px var(--pico-primary-focus);
+      }
+
+      code {
+        background: var(--pico-muted-border-color);
+        color: var(--pico-primary);
+        padding: 0.125rem 0.375rem;
+        border-radius: 0.25rem;
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Consolas, "Courier New",
+          monospace;
+        font-size: 0.75rem;
+      }
+
+      ul {
+        color: var(--pico-color);
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Scripting for Machinists</h1>
+      <p class="small">
+        Learn basic JavaScript by analyzing NC files and probe data. Copy code
+        from the files below and paste it into the code area to see how
+        scripting works with real machining data.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>① PASTE CODE HERE</h2>
+      <p class="small">
+        Copy your JavaScript code from the files and paste it here, or upload a
+        JS file:
+      </p>
+      <div style="margin-bottom: 8px">
+        <div class="file-input-wrapper">
+          <input id="jsFile" type="file" accept=".js" />
+          <label for="jsFile" class="file-input-button" title="Choose JS File">
+            <i class="fas fa-folder-open"></i>
+          </label>
+          <span class="file-input-text">Choose JS file</span>
+          <span
+            id="jsFileName"
+            class="file-name-display"
+            style="display: none"
+          ></span>
+        </div>
+      </div>
+      <textarea
+        id="codeArea"
+        placeholder="// Paste your JavaScript code here
+// Example: NC file parser, probe data analyzer, etc.
+
+// Your code goes here..."
+      ></textarea>
+    </div>
+
+    <div class="card">
+      <h2>② Load Files</h2>
+      <div class="upload-container">
+        <div class="file-input-wrapper">
+          <input id="file" type="file" accept=".nc,.csv,.txt,.js" multiple />
+          <label for="file" class="file-input-button" title="Choose Files">
+            <i class="fas fa-folder-open"></i>
+          </label>
+          <span class="file-input-text">Choose files</span>
+          <span
+            id="fileNames"
+            class="file-name-display"
+            style="display: none"
+          ></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>③ NC File Analysis</h2>
+      <div class="controls" style="margin-bottom: 15px">
+        <button id="analyzeBtn" class="btn">Analyze Files</button>
+        <button id="downloadBtn" class="btn" disabled>Download Results</button>
+      </div>
+      <div id="ncResults">
+        <pre id="ncOutput" class="small">No NC file loaded yet.</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>④ Probe Data Chart</h2>
+      <div id="probeResults">
+        <canvas id="chart" height="300"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Notes</h2>
+      <ul>
+        <li>
+          Units are inches. Adjust nominal/tolerance above; the bands and stats
+          update.
+        </li>
+        <li>
+          Use the code area to add your own JavaScript functions and experiment
+          with the data.
+        </li>
+      </ul>
+    </div>
+
+    <!-- Chart.js (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      // ===== Simple helpers =====
+      const $ = (s) => document.querySelector(s);
+      const on = (el, ev, fn) => el.addEventListener(ev, fn);
+
+      function readFileAsText(file) {
+        return new Promise((resolve, reject) => {
+          const r = new FileReader();
+          r.onload = () => resolve(String(r.result || ""));
+          r.onerror = reject;
+          r.readAsText(file);
+        });
+      }
+
+      function download(filename, text) {
+        const blob = new Blob([text], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 500);
+      }
+
+      // ===== Simple NC Parser =====
+      function parseNCFile(ncContent) {
+        const lines = ncContent.split("\n");
+        const tools = {};
+        let currentTool = null;
+        let lowestZ = null;
+        let toolComment = "";
+
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          const trimmed = line.trim();
+
+          // Find tool changes (T##)
+          const toolMatch = trimmed.match(/T(\d+)/);
+          if (toolMatch) {
+            if (currentTool && lowestZ !== null) {
+              tools[currentTool] = {
+                lowestZ: lowestZ,
+                comment: toolComment.trim(),
+              };
+            }
+            currentTool = parseInt(toolMatch[1]);
+            lowestZ = null;
+            toolComment = "";
+
+            // Look for comment on same line as T command
+            const commentMatch = trimmed.match(/\(([^)]+)\)/);
+            if (commentMatch) {
+              toolComment = commentMatch[1];
+            } else {
+              // Check next line for comment
+              if (i + 1 < lines.length) {
+                const nextLine = lines[i + 1].trim();
+                const nextCommentMatch = nextLine.match(/\(([^)]+)\)/);
+                if (nextCommentMatch) {
+                  toolComment = nextCommentMatch[1];
+                }
+              }
+            }
+          }
+
+          // Find Z coordinates
+          const zMatch = trimmed.match(/Z([+-]?\d*\.?\d+)/);
+          if (zMatch && currentTool !== null) {
+            const z = parseFloat(zMatch[1]);
+            if (lowestZ === null || z < lowestZ) {
+              lowestZ = z;
+            }
+          }
+        }
+
+        // Add the last tool
+        if (currentTool && lowestZ !== null) {
+          tools[currentTool] = {
+            lowestZ: lowestZ,
+            comment: toolComment.trim(),
+          };
+        }
+
+        return tools;
+      }
+
+      // ===== Simple Probe Data Parser =====
+      function parseProbeData(csvContent) {
+        const lines = csvContent.trim().split("\n");
+        const header = lines[0].split(",").map((h) => h.trim());
+        const data = [];
+
+        for (let i = 1; i < lines.length; i++) {
+          const values = lines[i].split(",").map((v) => v.trim());
+          if (values.length >= 6) {
+            data.push({
+              number: parseInt(values[0]),
+              nominal: parseFloat(values[1]),
+              measured: parseFloat(values[2]),
+              tolerance: parseFloat(values[3]),
+              compBand: parseFloat(values[4]),
+              compAmount: parseFloat(values[5]),
+            });
+          }
+        }
+
+        return data;
+      }
+
+      // ===== Simple Chart =====
+      let chart = null;
+
+      // ===== File handling =====
+      let loadedFiles = {};
+
+      function setLoadedFiles(files) {
+        for (const file of files) {
+          const ext = file.name.split(".").pop().toLowerCase();
+          if (ext === "nc" || ext === "txt") {
+            loadedFiles.nc = file;
+          } else if (ext === "csv") {
+            loadedFiles.probe = file;
+          } else if (ext === "js") {
+            loadedFiles.js = file;
+          }
+        }
+        updateStatus();
+      }
+
+      function updateStatus() {
+        // Status display is now handled by file name display in the file input sections
+        // No need to update a separate status element
+      }
+
+      async function loadJSFile(file) {
+        try {
+          const content = await readFileAsText(file);
+          const codeArea = $("#codeArea");
+          codeArea.value = content;
+          codeArea.classList.add("code-area-expanded");
+          loadedFiles.js = file;
+          updateStatus();
+        } catch (error) {
+          console.error(`Error loading JS file: ${error.message}`);
+        }
+      }
+
+      // ===== Main Analysis Function =====
+      async function analyzeFiles() {
+        let results = "";
+
+        // Analyze NC file
+        if (loadedFiles.nc) {
+          try {
+            const ncContent = await readFileAsText(loadedFiles.nc);
+            const tools = parseNCFile(ncContent);
+
+            results += "NC File Analysis:\n";
+            results += "================\n";
+            for (const [tool, data] of Object.entries(tools)) {
+              const comment = data.comment ? ` ${data.comment}` : "";
+              results += `T${tool.toString().padStart(2, "0")}${comment} Z min = ${data.lowestZ.toFixed(3)}\n`;
+            }
+            results += "\n";
+          } catch (error) {
+            results += `NC File Error: ${error.message}\n\n`;
+          }
+        }
+
+        // Analyze probe data
+        if (loadedFiles.probe) {
+          try {
+            const csvContent = await readFileAsText(loadedFiles.probe);
+            const probeData = parseProbeData(csvContent);
+
+            if (probeData.length > 0) {
+              // Execute user code to create the chart
+              console.log("User code:", window.userCode);
+              console.log(
+                "User code length:",
+                window.userCode ? window.userCode.length : 0
+              );
+
+              // Fallback: get textarea value directly
+              const textareaValue = $("#codeArea").value;
+              console.log("Textarea value directly:", textareaValue);
+              console.log(
+                "Textarea value length:",
+                textareaValue ? textareaValue.length : 0
+              );
+
+              const userCode = window.userCode || textareaValue;
+              if (userCode && userCode.trim()) {
+                try {
+                  // Destroy existing chart if it exists
+                  if (chart) {
+                    chart.destroy();
+                    chart = null;
+                  }
+
+                  eval(userCode);
+                  console.log(
+                    "createSimpleChart function exists:",
+                    typeof createSimpleChart === "function"
+                  );
+                  // Call the user's chart function
+                  if (typeof createSimpleChart === "function") {
+                    console.log(
+                      "Calling createSimpleChart with data:",
+                      probeData.length,
+                      "items"
+                    );
+                    chart = createSimpleChart(probeData);
+                    console.log("Chart created:", chart);
+                  } else {
+                    console.log(
+                      "No createSimpleChart function found in user code"
+                    );
+                  }
+                } catch (err) {
+                  console.error("Error executing user code:", err);
+                }
+              } else {
+                console.log(
+                  "No user code provided. Please paste your JavaScript code in the textarea."
+                );
+              }
+
+              // Calculate stats
+              const measured = probeData.map((d) => d.measured);
+              const mean =
+                measured.reduce((a, b) => a + b, 0) / measured.length;
+              const min = Math.min(...measured);
+              const max = Math.max(...measured);
+              const range = max - min;
+
+              results += "Probe Data Analysis:\n";
+              results += "===================\n";
+              results += `Parts analyzed: ${probeData.length}\n`;
+              results += `Mean size: ${mean.toFixed(4)}"\n`;
+              results += `Min size: ${min.toFixed(4)}"\n`;
+              results += `Max size: ${max.toFixed(4)}"\n`;
+              results += `Range: ${range.toFixed(4)}"\n`;
+              results += `Nominal: ${probeData[0].nominal}"\n`;
+              results += `Tolerance: ±${probeData[0].tolerance}"\n`;
+              results += `Comp Band: ±${probeData[0].compBand}"\n`;
+            }
+          } catch (error) {
+            results += `Probe Data Error: ${error.message}\n`;
+          }
+        }
+
+        if (Object.keys(loadedFiles).length === 0) {
+          results = "Please select at least one file to analyze.";
+        }
+
+        $("#ncOutput").textContent = results;
+        $("#downloadBtn").disabled = false;
+      }
+
+      // ===== Event Listeners =====
+      const fileInput = $("#file");
+
+      on(fileInput, "change", (e) => {
+        const files = Array.from(e.target.files);
+        setLoadedFiles(files);
+
+        // Update file names display
+        const fileNames = $("#fileNames");
+        const fileText = fileNames.previousElementSibling;
+        if (files.length > 0) {
+          const names = files.map((f) => f.name).join(", ");
+          fileNames.textContent = names;
+          fileNames.style.display = "inline";
+          fileText.style.display = "none";
+        } else {
+          fileNames.style.display = "none";
+          fileText.style.display = "inline";
+        }
+      });
+
+      on($("#jsFile"), "change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          loadJSFile(file);
+
+          // Update JS file name display
+          const jsFileName = $("#jsFileName");
+          const jsFileText = jsFileName.previousElementSibling;
+          jsFileName.textContent = file.name;
+          jsFileName.style.display = "inline";
+          jsFileText.style.display = "none";
+        }
+      });
+
+      on($("#analyzeBtn"), "click", analyzeFiles);
+
+      on($("#downloadBtn"), "click", () => {
+        const results = $("#ncOutput").textContent;
+        download("analysis_results.txt", results);
+      });
+
+      // Execute user code when they paste it
+      console.log("Setting up textarea input listener on:", $("#codeArea"));
+      on($("#codeArea"), "input", (e) => {
+        console.log("Textarea input event triggered!");
+        try {
+          // Store user code for reference
+          window.userCode = e.target.value;
+          console.log(
+            "Textarea input detected, userCode length:",
+            window.userCode ? window.userCode.length : 0
+          );
+
+          // Expand textarea if there's content
+          if (e.target.value.trim().length > 0) {
+            e.target.classList.add("code-area-expanded");
+          } else {
+            e.target.classList.remove("code-area-expanded");
+          }
+
+          console.log("Code updated. Ready to analyze files.");
+        } catch (err) {
+          console.error(`Code error: ${err.message}`);
+        }
+      });
+    </script>
+  </body>
+</html>

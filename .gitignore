@@ -1,0 +1,9 @@
+# Ignore common files
+.DS_Store
+Thumbs.db
+*.log
+node_modules/
+.env
+
+# Presentation materials
+PRESENTATION_GUIDE.md
