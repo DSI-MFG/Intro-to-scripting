@@ -1,101 +1,78 @@
-# Simple Scripting for Machinists
+# Scripting for Machinists
 
-This is a collection of simple JavaScript files that demonstrate basic scripting concepts for machinists.
+A simple learning platform for machinists to learn JavaScript scripting through interactive examples. Deploy to GitHub Pages for easy sharing and teaching.
 
-## Files
+## 🚀 **Quick Start**
 
-### 1. `nc-parser-simple.js`
+1. **Fork this repository** or download the files
+2. **Enable GitHub Pages** in repository settings
+3. **Visit your site**: `https://YOUR_USERNAME.github.io/REPOSITORY_NAME`
+4. **Start learning**: Load sample files and paste JavaScript code
 
-**What it does:** Parses NC (G-code) files to find tool changes and track the lowest Z position for each tool.
+## 📁 **Files**
 
-**Key concepts:**
+- `index.html` - Main learning platform (GitHub Pages ready)
+- `nc-parser-simple.js` - NC file parser example
+- `probe-analyzer-simple.js` - Probe data analyzer example
+- `sample_part.nc` - Sample NC file
+- `sample_probe_data.csv` - Sample probe data
+- `GITHUB_PAGES_SETUP.md` - Complete deployment guide
 
-- Reading text files line by line
-- Using regular expressions to find patterns
-- Storing data in objects
-- Looping through arrays
+## 🎯 **Features**
 
-**Example output:**
+- **NC File Parser**: Extract tool information and Z-coordinates from NC files
+- **Probe Data Analyzer**: Visualize probe data with Chart.js
+- **Interactive Learning**: Paste JavaScript code and see results immediately
+- **Sample Data**: Included sample files for testing
+- **GitHub Pages Ready**: Deploy with one click
 
+## 🛠 **Setup for GitHub Pages**
+
+### **Option 1: Fork and Deploy**
+
+1. Click "Fork" on this repository
+2. Go to Settings → Pages
+3. Select "Deploy from a branch" → "main" → "/ (root)"
+4. Visit `https://YOUR_USERNAME.github.io/REPOSITORY_NAME`
+
+### **Option 2: Manual Setup**
+
+```bash
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/scripting-for-machinists.git
+cd scripting-for-machinists
+
+# Push to your repository
+git remote set-url origin https://github.com/YOUR_USERNAME/scripting-for-machinists.git
+git push -u origin main
 ```
-T01 lowest point: Z0.500
-T02 lowest point: Z0.200
-T03 lowest point: Z1.000
-```
 
-### 2. `probe-analyzer-simple.js`
+## 🎓 **Learning Objectives**
 
-**What it does:** Reads probe data from CSV files and creates charts showing measured values vs tolerance bands.
+- **Understand basic JavaScript concepts**
+- **Learn file processing and data parsing**
+- **Create interactive data visualizations**
+- **Apply scripting to real machining problems**
 
-**Key concepts:**
+## 📚 **How to Use**
 
-- Parsing CSV data
-- Working with arrays and objects
-- Creating charts with Chart.js
-- Calculating basic statistics
+1. **Load Files**: Upload NC and CSV files or use the samples
+2. **Paste Code**: Copy JavaScript from the example files
+3. **Analyze**: Click "Analyze Files" to see results
+4. **Experiment**: Modify the code to see different results
 
-**CSV Format:**
+## 🔧 **Requirements**
 
-```csv
-number, nominal size, measured size, tolerance, comp band tolerance, comp amount
-1, 1.0000, 1.0000, 0.0030, 0.0010, 0.0000
-2, 1.0000, 1.0012, 0.0030, 0.0010, -0.0012
-```
+- **Modern web browser** with JavaScript enabled
+- **No server setup** required - runs entirely in browser
+- **GitHub account** for deployment (optional)
 
-### 3. `example-usage.js`
+## 🌐 **Deployment Options**
 
-**What it does:** Shows how to use both parsers together in a complete application.
+- **GitHub Pages**: Free hosting (recommended)
+- **Local**: Open `index.html` in browser
+- **Any static host**: Netlify, Vercel, etc.
 
-**Key concepts:**
+## 📖 **Documentation**
 
-- File handling with FileReader
-- Async/await for file operations
-- Event listeners
-- Error handling
-- DOM manipulation
-
-## How to Use
-
-1. **Copy the code** from any of these files
-2. **Paste it** into the "PASTE CODE HERE" section of the HTML page
-3. **Load your files** (NC file and/or probe CSV)
-4. **Click Analyze** to see the results
-
-## Learning Points
-
-### For NC Parser:
-
-- `split('\n')` - breaks text into lines
-- `match(/T(\d+)/)` - finds tool numbers using regex
-- `parseInt()` - converts text to numbers
-- Objects store key-value pairs
-
-### For Probe Analyzer:
-
-- `map()` - transforms arrays
-- `reduce()` - calculates totals
-- `Math.min()` and `Math.max()` - find extremes
-- Chart.js creates visualizations
-
-### For Complete App:
-
-- `addEventListener()` - responds to button clicks
-- `async/await` - handles file reading
-- `try/catch` - handles errors gracefully
-- `document.getElementById()` - finds HTML elements
-
-## Sample Data
-
-Use `sample_probe_data.csv` to test the probe analyzer. It contains 25 parts with realistic measurement data.
-
-## Next Steps
-
-Once you understand these basics, you can:
-
-- Add more file formats
-- Create different chart types
-- Add data filtering
-- Export results in different formats
-- Build a complete web application
-
-Remember: Start simple, then add complexity as you learn!
+See `GITHUB_PAGES_SETUP.md` for detailed deployment instructions and advanced configuration options.
