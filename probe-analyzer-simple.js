@@ -117,6 +117,20 @@ function createSimpleChart(probeData) {
       responsive: true,
       plugins: {
         legend: { position: "bottom" },
+        tooltip: {
+          callbacks: {
+            afterLabel: function (context) {
+              // For the "Compensation Applied" dataset, show only the comp amount
+              if (context.datasetIndex === 6) {
+                // Index 6 is "Compensation Applied"
+                const dataIndex = context.dataIndex;
+                const compAmount = probeData[dataIndex].compAmount;
+                return `Comp Amount: ${compAmount.toFixed(4)}"`;
+              }
+              return "";
+            },
+          },
+        },
       },
       scales: {
         y: {

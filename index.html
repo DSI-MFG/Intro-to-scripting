@@ -241,6 +241,8 @@
       // Global variables
       let uploadedFiles = {};
       let chart = null;
+      let lastExecutionTime = 0;
+      const RATE_LIMIT_MS = 2000; // 2 seconds between executions
 
       // File handling for display
       document.getElementById("file").addEventListener("change", function (e) {
@@ -310,6 +312,102 @@
           }
         });
 
+      // Security: Code validation function
+      function validateUserCode(code) {
+        // First, check for truly dangerous operations
+        const dangerousPatterns = [
+          // Network requests
+          /fetch\s*\(/i,
+          /XMLHttpRequest/i,
+          /WebSocket/i,
+          /EventSource/i,
+
+          // Storage access
+          /localStorage/i,
+          /sessionStorage/i,
+          /indexedDB/i,
+
+          // Dangerous DOM manipulation (but allow chart-related operations)
+          /document\.(body|head|title|cookie|domain|referrer|URL|write|writeln)/i,
+          /document\.createElement/i,
+          /document\.getElementsBy/i,
+          /document\.querySelector/i,
+          /document\.addEventListener/i,
+          /document\.removeEventListener/i,
+          /window\.(location|history|navigator|localStorage|sessionStorage)/i,
+          /navigator\./i,
+          /location\./i,
+          /history\./i,
+
+          // Code execution
+          /eval\s*\(/i,
+          /new\s+Function\s*\(/i,
+          /setTimeout\s*\(/i,
+          /setInterval\s*\(/i,
+          /setImmediate\s*\(/i,
+
+          // File system access
+          /FileReader/i,
+          /new\s+Blob/i,
+          /new\s+File/i,
+
+          // Other dangerous APIs
+          /crypto\./i,
+          /performance\./i,
+          /alert\s*\(/i,
+          /confirm\s*\(/i,
+          /prompt\s*\(/i,
+
+          // Import/require statements
+          /import\s+/i,
+          /require\s*\(/i,
+          /module\./i,
+          /exports\./i,
+
+          // Global object access
+          /globalThis/i,
+          /self\./i,
+          /top\./i,
+          /parent\./i,
+
+          // Dangerous operators
+          /new\s+RegExp/i,
+          /new\s+Error/i,
+        ];
+
+        for (const pattern of dangerousPatterns) {
+          if (pattern.test(code)) {
+            const match = code.match(pattern);
+            throw new Error(
+              `Code contains potentially dangerous operation: "${match[0]}"`
+            );
+          }
+        }
+
+        // Allow specific safe operations for chart functionality
+        const allowedDocumentOperations = [
+          "document.getElementById",
+          "document.getContext",
+        ];
+
+        // Check if code contains any document operations not in allowed list
+        const documentMatches = code.match(/document\.\w+/gi);
+        if (documentMatches) {
+          for (const match of documentMatches) {
+            const isAllowed = allowedDocumentOperations.some((allowed) =>
+              match.toLowerCase().includes(allowed.toLowerCase())
+            );
+            if (!isAllowed) {
+              throw new Error(
+                `Code contains potentially dangerous operation: "${match}"`
+              );
+            }
+          }
+        }
+
+        return true;
+      }
+
       // Helper function for probe data parsing
       function parseProbeData(csvContent) {
         const lines = csvContent.trim().split("\n");
@@ -342,11 +440,32 @@
           return;
         }
 
+        // Rate limiting check
+        const now = Date.now();
+        if (now - lastExecutionTime < RATE_LIMIT_MS) {
+          const remainingTime = Math.ceil(
+            (RATE_LIMIT_MS - (now - lastExecutionTime)) / 1000
+          );
+          document.getElementById("results").innerHTML = `
+            <div class="card">
+              <h3>Rate Limited</h3>
+              <p>Please wait ${remainingTime} second(s) before running code again.</p>
+            </div>
+          `;
+          return;
+        }
+
         // Show loading indicator
         document.getElementById("loading").style.display = "block";
         document.getElementById("results").innerHTML = "";
 
         try {
+          // Validate user code for security
+          validateUserCode(userCode);
+
+          // Update last execution time
+          lastExecutionTime = now;
+
           // Execute user code
           eval(userCode);
 
@@ -406,11 +525,22 @@
 
           document.getElementById("results").innerHTML = results;
         } catch (error) {
+          let errorType = "Code Execution Error";
+          let errorMessage = error.message;
+          let additionalInfo =
+            "Please check your JavaScript syntax and try again.";
+
+          if (error.message.includes("potentially dangerous operation")) {
+            errorType = "Security Validation Error";
+            additionalInfo =
+              "Your code contains operations that are not allowed for security reasons. Please remove any network requests, DOM manipulation, or other restricted operations.";
+          }
+
           document.getElementById("results").innerHTML = `
             <div class="card">
-              <h3>Code Execution Error</h3>
-              <p>Error: ${error.message}</p>
-              <p>Please check your JavaScript syntax and try again.</p>
+              <h3>${errorType}</h3>
+              <p>Error: ${errorMessage}</p>
+              <p>${additionalInfo}</p>
             </div>
           `;
         } finally {
